@@ -37,13 +37,13 @@ class world:
     def position(self,pos) : #change pos according to border condition
         if self.b_cond == 0 : #hard wall
             for ii in range(len(pos)) :
-                if pos[ii] < 0
+                if pos[ii] < 0 :
                     pos[ii] = -pos[ii]
                 elif pos[ii] > self.w[ii] :
                     pos[ii] = 2*self.w[ii]-pos[ii]
         elif self.b_cond == 1 : # end=start
              for ii in range(len(pos)) :
-                if pos[ii] < 0
+                if pos[ii] < 0 :
                     pos[ii] = self.w[ii]+pos[ii]
                 elif pos[ii] > self.w[ii] :
                     pos[ii] = pos[ii]-self.w[ii]
