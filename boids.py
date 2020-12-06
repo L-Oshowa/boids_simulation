@@ -11,17 +11,14 @@ argument :
 function : 
     __init__ : init function
     '''
+import numpy as np
+
 class Boids :
-    def __init__(self,x,y,vx,vy,maxv,maxa,view_range,view_angle) :
-        self.name='mon nom est boids !'
-        self.x = x
-        self.y = y
-        self.vx = vx
-        self.vy = vy
-        self.maxv = x
-        self.maxa = x
+    def __init__(self,pos,v,maxv,maxa,view_range,view_angle) :
+        self.pos = pos
+        self.v = v
+        self.maxv = maxv
+        self.maxa = maxa
         self.view_range = view_range
         self.view_angle = view_angle
-boids = Boids(0,0,1,1,)
-print(boids.vy)
-print(boids.name)
+    def steering(self,l_n_boids) :
