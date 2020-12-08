@@ -1,7 +1,7 @@
-import boids.py 
+import boids
 import numpy as np
 '''The World class contain the Boids, the obstacle, the dimention and the rule of the world
-/!\ in the case of black hole border, the position given to the class need to be shifted to match the real border. check world class to be sure
+!!! in the case of black hole border, the position given to the class need to be shifted to match the real border. check world class to be sure
 arument :
     l_boids : an array of Boids
     l_obstacle : an array of obstacle (WIP)
@@ -30,12 +30,12 @@ class world:
                 print('view range to big for the simulation with b_cond = 1')
         self.l_boids = []
         for ii in range(n_boids):
-            self.l_boids.append(Boids(l_pos[det_in(l_pos,ii)]+max(l_view_range)*(self.b_cond==2), \
-                l_v[det_in(l_v,ii)], \
-                l_maxv[det_in(l_maxv,ii)], \
-                l_maxa[det_in(l_maxa,ii)], \
-                l_view_range[det_in(l_view_range,ii)], \
-                l_view_angle[det_in(l_view_angle,ii)]))
+            self.l_boids.append(boids.Boids(l_pos[self.det_in(l_pos,ii)]+max(l_view_range)*(self.b_cond==2), \
+                l_v[self.det_in(l_v,ii)], \
+                l_maxv[self.det_in(l_maxv,ii)], \
+                l_maxa[self.det_in(l_maxa,ii)], \
+                l_view_range[self.det_in(l_view_range,ii)], \
+                l_view_angle[self.det_in(l_view_angle,ii)]))
         self.l_obstacle = [] #WIP     
     def position(self,pos) : #change pos according to border condition NEED ALSO TO CHANGE SPEED
         if self.b_cond == 0 : #hard wall
@@ -58,7 +58,7 @@ class world:
             for ii in range(len(self.l_boids)) :
                 if ii != ii_boids :
                     vec = self.l_boids[ii].pos-self.l_boids[ii_boids].pos
-                    if np.linalg.norm(vec,2) <= boids.view_range :
+                    if np.linalg.norm(vec,2) <= self.l_boids[ii_boids].view_range :
                         if np.arccos(np.dot(self.l_boids[ii_boids].v,vec)/np.linalg.norm(self.l_boids[ii_boids].v,2)/np.linalg.norm(vec,2)) <= self.l_boids[ii_boids].view_angle :
                             l_neighbour.append(ii)
             return l_neighbour
@@ -69,8 +69,8 @@ class world:
                 if ii != ii_boids :
                     vec = self.l_boids[ii].pos-self.l_boids[ii_boids].pos
                     calc_pos = 1*(vec > self.w)-1*(vec < -self.w)
-                    vec += case_shift*self.w
-                    if np.linalg.norm(vec,2) <= boids.view_range :
+                    vec += calc_pos*self.w
+                    if np.linalg.norm(vec,2) <= self.l_boids[ii_boids].view_range :
                         if np.arccos(np.dot(self.l_boids[ii_boids].v,vec)/np.linalg.norm(self.l_boids[ii_boids].v,2)/np.linalg.norm(vec,2)) <= self.l_boids[ii_boids].view_angle :
                             l_neighbour.append(ii)
                             l_calc_pos.append(calc_pos)
@@ -80,7 +80,7 @@ class world:
             for ii in range(len(self.l_boids)) :
                 if ii != ii_boids :
                     vec = self.l_boids[ii].pos-self.l_boids[ii_boids].pos
-                    if np.linalg.norm(vec,2) <= boids.view_range :
+                    if np.linalg.norm(vec,2) <= self.l_boids[ii_boids].view_range :
                         if np.arccos(np.dot(self.l_boids[ii_boids].v,vec)/np.linalg.norm(self.l_boids[ii_boids].v,2)/np.linalg.norm(vec,2)) <= self.l_boids[ii_boids].view_angle :
                             l_neighbour.append(ii)
             return l_neighbour
