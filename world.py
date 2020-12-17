@@ -23,6 +23,8 @@ class world:
     def __init__(self,n_boids,l_pos,l_v,l_maxv,l_maxa,l_view_range,l_view_angle,w,b_cond):
         self.w = w
         self.b_cond = b_cond
+        if not self.b_cond==0 :
+            print('border condition WIP')
         if self.b_cond == 2: # if the border_cond is black hole, make an "real windows" with a size = to normal size + twice the biggest boids range.
             self.real_w = w+2*max(l_view_range)
         elif self.b_cond == 1:
@@ -37,7 +39,7 @@ class world:
                 l_view_range[self.det_in(l_view_range,ii)], \
                 l_view_angle[self.det_in(l_view_angle,ii)]))
         self.l_obstacle = [] #WIP     
-    def position(self,pos) : #change pos according to border condition NEED ALSO TO CHANGE SPEED
+    def position(self,pos,) : #change pos according to border condition NEED ALSO TO CHANGE SPEED
         if self.b_cond == 0 : #hard wall
             for ii in range(len(pos)) :
                 if pos[ii] < 0 :
@@ -62,7 +64,6 @@ class world:
                         if np.arccos(np.dot(self.l_boids[ii_boids].v,vec)/np.linalg.norm(self.l_boids[ii_boids].v,2)/np.linalg.norm(vec,2)) <= self.l_boids[ii_boids].view_angle :
                             l_neighbour.append(ii)
             return l_neighbour
-
         elif self.b_cond == 1 : # end=start case : to have a perfect simu, we should solve the torus geodesic. to complicate -> we deliminate the max view range < min w
             l_calc_pos = []
             for ii in range(len(self.l_boids)) :
