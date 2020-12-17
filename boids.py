@@ -21,4 +21,3 @@ class Boids :
         self.maxa = maxa
         self.view_range = view_range
         self.view_angle = view_angle
-    def steering(self,l_n_boids) :
