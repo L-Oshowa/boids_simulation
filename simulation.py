@@ -1,7 +1,7 @@
 import numpy as np
 import boids
 import world
-import Interface_Graphique
+import Interface_Graphique as ui
 
 class simulation :
     def det_in(self,in_list,ii) :  #check if in_list is of length 1 or <= ii in the first case, returne 1, in the second, return ii. if ii>len(in_list) return the last element of the liste and print a message
@@ -32,7 +32,7 @@ class simulation :
                 l_maxv[self.det_in(l_maxv,ii)], \
                 l_maxa[self.det_in(l_maxa,ii)], \
                 l_view_range[self.det_in(l_view_range,ii)], \
-                l_view_angle[self.det_in(l_view_angle,ii)]) for ii in range(n_boids)]
+                l_view_angle[self.det_in(l_view_angle,ii)]) for ii in range(n_boids)]               
     def time_step (self) :
         pos_temp,v_temp = [x.steering(\
                             [y for y in self.l_boids[0:ix]+self.l_boids[ix+1:] if self.my_world.isinrange(x,y)]\
