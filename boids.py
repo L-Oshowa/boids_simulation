@@ -11,7 +11,6 @@ argument :
 function : 
     __init__ : init function
     '''
-import numpy as np
 
 class Boids :
     def __init__(self,pos,v,maxv,maxa,view_range,view_angle) :

@@ -2,85 +2,86 @@ import tkinter as tk
 import math
 
 
-class BoidFrame:  # Create a window for the boids and update their position. ATTENTION: Take only lists !!!
-    def __init__(self, master, x_position, y_position, x_speed, y_speed, width, height):
+class BoidFrame:
+    '''
+    The BoidFrame class creates a canvas containing all the drawing of boids
+    The input are a list of boids, tk and the dimensions of the window
 
-        # Create variables used for drawing
-        self.nbr_object = len(x_position)
-        self.drawing = []
+    Fct:
+        __init__:   create the canvas and draw the original position of the boids
+        polygon:    create a polygon with the shape of the boids
+        update:     update the position of the boids
+
+    Variables:
+
+        master:     contain the TK
+        drawing:    list of boids
+        canvas:     canvas on which the boids are drawn
+
+        l1, l2, l3: variable used to create the shape of the boids
+    '''
+
+    def __init__(self, master, boids, width, height):
+
+        self.nbr_boids = len(boids)
         self.master = master
 
-        # Create and draw the canvas
         self.canvas = tk.Canvas(self.master, width=width, height=height)
         self.canvas.pack()
 
-        # Draw the boids and store them in self.drawing
-        for x in range(self.nbr_object):
-            draw = self.canvas.create_polygon(self.points_polygon(x_position[x], y_position[x], x_speed[x], y_speed[x]))
-            self.drawing.append(draw)
+        self.drawing = [self.canvas.create_polygon(
+                                self.polygon(boids[x].pos[0], boids[x].pos[1], boids[x].v[0], boids[x].v[1])
+                        ) for x in range(self.nbr_boids)]
 
-    def points_polygon(self, x, y, sx, sy):  # Create the shape of the boids
+    @staticmethod
+    def polygon(x, y, sx, sy):
 
         # Three parameters which define the shape of the boids
         l1 = 7  # Distance between the position and the tip of the boid
         l2 = 7  # Distance between the position and the back of the boid
         l3 = 4  # Half the length of the back of the boid
 
-        # The norm of the speed
-        norm = math.sqrt(sx**2 + sy**2)
+        s = math.sqrt(sx**2 + sy**2)  # norm of the speed
 
-        # Store the points in the format (x1, y1, x2, y2, x3, y3, ...)
-        points = []
+        return [x+(sy*l3-sx*l2)/s, y-(sx*l3+sy*l2)/s, x+(sx*l1)/s, y+(sy*l1)/s, x-(sy*l3+sx*l2)/s, y+(sx*l3-sy*l2)/s]
 
-        #points.append(x)
-        #points.append(y)
+    def update(self, x_position, y_position, x_speed, y_speed):
 
-        points.append(x+(sy*l3-sx*l2)/norm)
-        points.append(y-(sx*l3+sy*l2)/norm)
-
-        points.append(x+(sx*l1)/norm)
-        points.append(y+(sy*l1)/norm)
-
-        points.append(x-(sy*l3+sx*l2)/norm)
-        points.append(y+(sx*l3-sy*l2)/norm)
-
-        return points
-
-    def update(self, x_position, y_position, x_speed, y_speed):  # Update the position of the boids
-        for x in range(self.nbr_object):
-            self.canvas.coords(self.drawing[x], self.points_polygon(x_position[x], y_position[x], x_speed[x], y_speed[x]))
+        for x in range(self.nbr_boids):
+            self.canvas.coords(self.drawing[x], self.polygon(x_position[x], y_position[x], x_speed[x], y_speed[x]))
         self.master.update()
 
 
-class MainFrame:  # The big frame containing the boids frame and some buttons, used to run the simulation
+class MainFrame:
+    '''
+        The MainFrame class creates a window containing multiples canvas including boids, button, etc.
+        The input are a list of boids and the dimensions of the window
 
-    def __init__(self, x_position, y_position, x_speed, y_speed, width, height):
+        Fct:
+            __init__:   create the window and the different canvas
 
-        # Initialise tk window
+        Variables:
+            root:           contain the TK
+            boid_window:    the canvas containing the boids (a BoidFrame object)
+            button_canvas:  the canvas containing the buttons
+            b_start:        the start button
+
+        '''
+
+    def __init__(self, list_boids, width, height):
+
         root = tk.Tk()
         root.title("Boids")
-
-        # Put the tk window upfront
         root.lift()
         root.attributes('-topmost', True)
         root.after_idle(root.attributes, '-topmost', False)
 
-        # Recover information for all the function of the object
-        self.posX = x_position
-        self.posY = y_position
-        self.speedX = x_speed
-        self.speedY = y_speed
+        self.boid_window = BoidFrame(root, list_boids, width, height)
 
-        # Create the window for the boids
-        self.boid_window = BoidFrame(root, x_position, y_position, x_speed, y_speed, width, height)
-
-        # The canvas for the button
         self.button_canvas = tk.Canvas(root, width=width, height=20, highlightthickness=0)
         self.button_canvas.pack()
 
-        # Add a button to start the simulation !!! CURRENTLY NOT WORKING
-        self.b_start = tk.Button(self.button_canvas, text='Start')
+        self.b_start = tk.Button(self.button_canvas, text='Start')  # !!! Currently without function !!!
         self.b_start.pack()
 
-        # Update tk window
         root.update()
