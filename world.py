@@ -18,16 +18,21 @@ class World:
         self.l_obstacle = [] #WIP
     def position(self,pos,speed) : #change pos and speed according to border condition
         if self.b_cond == 0 : #hard wall
-            return [[-x,-v] if x<0 else [2*y-x,-v] if x>y else [x,v] for x,y,v in zip(pos,self.w,speed)]
+            poscond = (2*self.w-2*pos)*(pos>self.w)-2*pos*(pos<0)
+            speedcond = -2*speed*np.any([pos<0,pos>self.w], axis = 0)
+            return [pos+poscond,speed+speedcond]
+            #return [[-x,-v] if x<0 else [2*y-x,-v] if x>y else [x,v] for x,y,v in zip(pos,self.w,speed)]
         elif self.b_cond == 1 : # end=start
-            return [[x+y,v] if x<0 else [x-y,v] if y>y else [x,y] for x,y,v in zip(pos,self.w,speed)]
+            print('WIP')
+            #return [[x+y,v] if x<0 else [x-y,v] if y>y else [x,y] for x,y,v in zip(pos,self.w,speed)]
+            return [pos,speed]
         else :
             return [pos,speed]
     def isinrange(self,boids1,boids2) : #determine if boids1 see boids2 according to the world
         if self.b_cond == 0 : # hard wall case : the line of sight is stoped by the border
             vec = boids2.pos-boids1.pos
             if np.linalg.norm(vec,2) <= boids1.view_range :
-                if np.arccos(np.dot(boids1.v,vec)/np.linalg.norm(boids1.v,2)/np.linalg.norm(vec,2)) <= boids1.view_angle :
+                if np.arccos(np.dot(boids1.v,vec)/np.linalg.norm(boids1.v,2)/np.linalg.norm(vec,2)) <= boids1.view_angle/180*np.pi :
                     return 1
             return 0
         else :

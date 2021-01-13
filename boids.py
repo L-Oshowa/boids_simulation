@@ -7,7 +7,7 @@ argument :
     maxv : max speed
     maxa : max acceleration
     view_range : range in which the boids take the other boids in account
-    view_angle : angle of view in which the boids take the other boids in account (determined from the speed direction, on the both side)
+    view_angle : angle of view in which the boids take the other boids in account in deg (determined from the speed direction, on the both side)
 function : 
     __init__ : init function
     '''
@@ -21,3 +21,8 @@ class Boids :
         self.maxa = maxa
         self.view_range = view_range
         self.view_angle = view_angle
+    def steering(self,l_boids) :
+        return self.pos+self.v, self.v
+    def update(self,npos,nv) :
+        self.pos = npos
+        self.v = nv
