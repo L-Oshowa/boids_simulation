@@ -32,8 +32,7 @@ class Simulation :
                 l_maxa[self.det_in(l_maxa,ii)], \
                 l_view_range[self.det_in(l_view_range,ii)], \
                 l_view_angle[self.det_in(l_view_angle,ii)]) for ii in range(n_boids)]   
-        self.window = ui.MainFrame([x.pos[0] for x in self.l_boids], [x.pos[1] for x in self.l_boids], \
-             [x.v[0] for x in self.l_boids], [x.v[1] for x in self.l_boids], self.my_world.w[0], self.my_world.w[1])  #creation of the UI          
+        self.window = ui.MainFrame(self.l_boids, self.my_world.w[0], self.my_world.w[1])  #creation of the UI
     def time_step (self) : #can bug is only one boids
         pos_temp = []
         v_temp = []
@@ -42,7 +41,7 @@ class Simulation :
             for iy,y in enumerate(self.l_boids) :
                 if iy!=ix and self.my_world.isinrange(x,y) :
                     y_temp.append(y)
-            temp = x.steering(y)
+            temp = x.steering(y_temp)
             temp = self.my_world.position(temp[0],temp[1])
             pos_temp.append(temp[0])
             v_temp.append(temp[1])

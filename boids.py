@@ -28,36 +28,47 @@ class Boids :
 
     def steering(self, list_neighbour):
         nbr_neighbour = len(list_neighbour)
-        force_separation = np.array([0, 0])
-        center_gravity = np.array([0, 0])
-        alignment = np.array([0, 0])
-        total_attraction = 0
+        if nbr_neighbour != 0:
+            force_separation = np.array([0, 0])
+            center_gravity = np.array([0, 0])
+            alignment = np.array([0, 0])
+            total_attraction = 0
 
-        for i in range(nbr_neighbour):
+            for i in range(nbr_neighbour):
 
-            # separation computation
-            separation = list_neighbour[i].pos - self.pos
-            force_separation = force_separation -separation / np.square(np.linalg.norm(separation))
+                # separation computation
+                separation = list_neighbour[i].pos - self.pos
+                force_separation = force_separation -separation / np.square(np.linalg.norm(separation))
 
-            # cohesion computation
-            neighbour_attraction = list_neighbour[i].attraction
-            total_attraction += neighbour_attraction
-            center_gravity += list_neighbour[i].pos * neighbour_attraction
+                # cohesion computation
+                neighbour_attraction = list_neighbour[i].attraction
+                total_attraction += neighbour_attraction
+                center_gravity = center_gravity + list_neighbour[i].pos * neighbour_attraction
 
-            # alignment computation
-            alignment = alignment + list_neighbour[i].v/nbr_neighbour
+                # alignment computation
+                alignment = alignment + list_neighbour[i].v/nbr_neighbour
 
-        center_gravity = center_gravity / total_attraction
-        alignment -= self.v
+            center_gravity = center_gravity / total_attraction
+            alignment = alignment - self.v
 
-        force = self.steering_coeff[0] * force_separation\
-              + self.steering_coeff[1] * (center_gravity-self.pos)\
-              + self.steering_coeff[2] * alignment
+            force = self.steering_coeff[0] * force_separation\
+                  + self.steering_coeff[1] * (center_gravity-self.pos)\
+                  + self.steering_coeff[2] * alignment
 
-        acceleration = force / self.mass
-        new_v = acceleration + self.v
+            acceleration = force / self.mass
+            norm_a =np.linalg.norm(acceleration)
+            if norm_a > self.maxa: acceleration = acceleration * self.maxa / norm_a
+
+            new_v = acceleration + self.v
+            norm_v = np.linalg.norm(new_v)
+            if norm_v > self.maxv: new_v = new_v * self.maxv / norm_v
+
+        else:
+            new_v = self.v
+
         new_pos = self.pos + self.v
         return new_pos, new_v
+
     def update(self,npos,nv) :
         self.pos = npos
         self.v = nv
