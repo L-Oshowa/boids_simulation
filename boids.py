@@ -58,3 +58,6 @@ class Boids :
         new_v = acceleration + self.v
         new_pos = self.pos + self.v
         return new_pos, new_v
+    def update(self,npos,nv) :
+        self.pos = npos
+        self.v = nv
