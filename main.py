@@ -1,21 +1,35 @@
 import simulation
 import numpy as np
 import time
+import matplotlib.pyplot as plt
+rng = np.random.default_rng()
 
-n_boids = 3
-l_pos = [np.array([110,120]),np.array([160,170]),np.array([160,190])]
-l_v = [np.array([5,5]),np.array([5,-5]),np.array([5,-5])]
-l_maxv = [40]
-l_maxa = [40]
-l_view_range = [100]
-l_view_angle = [80]
-w = np.array([500,500])
-b_cond = 0
+l = range(2,100)
+dt = [0.0]*len(l)
+for n_boids in l :
+    n_boids = 100
+    w = np.array([500,500])
+    b_cond = 0
+    l_pos = [rng.random(2)*w for ii in range(n_boids)]
+    l_v = [rng.random(2)*3 for ii in range(n_boids)]
+    l_maxv = [10]
+    l_maxa = [1]
+    l_view_range = [100]
+    l_view_angle = [80]
 
-n = 300
+    n = 100
 
-simu = simulation.Simulation(n_boids,l_pos,l_v,l_maxv,l_maxa,l_view_range,l_view_angle,w,b_cond)
+    simu = simulation.Simulation(n_boids,l_pos,l_v,l_maxv,l_maxa,l_view_range,l_view_angle,w,b_cond)
 
-for ii in range(n) :
-    time.sleep(0.05)
-    simu.time_step()
+    for ii in range(n) :
+        ts = 0.05
+        #time.sleep(ts)
+        start = time.time()
+        simu.time_step()
+        end = time.time()
+        dt[n_boids] = (end-start+ii*dt[n_boids])/(ii+1)
+plt.plot(list(l),dt,'-x')
+plt.xlabel('nbr boids')
+plt.ylabel('t_moyen sur 100 pas [s]')
+plt.grid()
+plt.show()
