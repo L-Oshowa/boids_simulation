@@ -1,5 +1,7 @@
 import tkinter as tk
 import math
+from main import start_simulation
+import asyncio
 
 
 class BoidFrame:
@@ -70,18 +72,25 @@ class MainFrame:
 
     def __init__(self, list_boids, width, height):
 
-        root = tk.Tk()
-        root.title("Boids")
-        root.lift()
-        root.attributes('-topmost', True)
-        root.after_idle(root.attributes, '-topmost', False)
+        self.root = tk.Tk()
+        self.root.title("Boids")
+        self.root.lift()
+        self.root.attributes('-topmost', True)
+        self.root.after_idle(self.root.attributes, '-topmost', False)
 
-        self.boid_window = BoidFrame(root, list_boids, width, height)
+        self.boid_window = BoidFrame(self.root, list_boids, width, height)
 
-        self.button_canvas = tk.Canvas(root, width=width, height=20, highlightthickness=0)
+        self.button_canvas = tk.Canvas(self.root, width=width, height=20, highlightthickness=0)
         self.button_canvas.pack()
 
-        self.b_start = tk.Button(self.button_canvas, text='Start')  # !!! Currently without function !!!
+        self.b_start = tk.Button(self.button_canvas, text='Start', command=self.start_button)
         self.b_start.pack()
 
-        root.update()
+        self.root.update()
+
+    def start_button(self):
+        if self.b_start['text'] == 'Start':
+            self.b_start['text'] = 'Stop'
+            return asyncio.ensure_future(start_simulation(self.b_start))
+        else:
+            self.b_start['text'] = 'Start'

@@ -57,11 +57,13 @@ class Boids :
 
             acceleration = force / self.mass
             norm_a =np.linalg.norm(acceleration)
-            if norm_a > self.maxa: acceleration = acceleration * self.maxa / norm_a
+            if norm_a > self.maxa:
+                acceleration = acceleration * self.maxa / norm_a
 
             new_v = acceleration + self.v
             norm_v = np.linalg.norm(new_v)
-            if norm_v > self.maxv: new_v = new_v * self.maxv / norm_v
+            if norm_v > self.maxv:
+                new_v = new_v * self.maxv / norm_v
 
         else:
             new_v = self.v
@@ -69,6 +71,6 @@ class Boids :
         new_pos = self.pos + self.v
         return new_pos, new_v
 
-    def update(self,npos,nv) :
+    def update(self, npos, nv):
         self.pos = npos
         self.v = nv
