@@ -4,10 +4,9 @@ import time
 import matplotlib.pyplot as plt
 rng = np.random.default_rng()
 
-l = range(2,100)
+l = range(2,100,10)
 dt = [0.0]*len(l)
-for n_boids in l :
-    n_boids = 100
+for ii,n_boids in enumerate(l) :
     w = np.array([500,500])
     b_cond = 0
     l_pos = [rng.random(2)*w for ii in range(n_boids)]
@@ -21,13 +20,13 @@ for n_boids in l :
 
     simu = simulation.Simulation(n_boids,l_pos,l_v,l_maxv,l_maxa,l_view_range,l_view_angle,w,b_cond)
 
-    for ii in range(n) :
+    for jj in range(n) :
         ts = 0.05
         #time.sleep(ts)
         start = time.time()
         simu.time_step()
         end = time.time()
-        dt[n_boids] = (end-start+ii*dt[n_boids])/(ii+1)
+        dt[ii] = (end-start+ii*dt[ii])/(ii+1)
 plt.plot(list(l),dt,'-x')
 plt.xlabel('nbr boids')
 plt.ylabel('t_moyen sur 100 pas [s]')
