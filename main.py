@@ -3,7 +3,23 @@ import asyncio
 from Interface_Graphique import run_tk, MainFrame
 
 
-async def main():
+async def await_inf_loop(window):
+    """
+    Tell __main__ to wait for the tk loop to finish.
+    The infinite loop will end when an error occurs => the window is closed.
+
+    Parameters:
+        window: Entire tk_window that will be display on screen
+
+    Variables:
+        refresh_time: Time it takes for the windows to update and acknowledge changes.
+    """
+
+    refresh_time = 0.01
+    await run_tk(window, refresh_time)
+
+
+if __name__ == "__main__":
 
     n_boids = 3
     l_pos = [np.array([110, 120]), np.array([160, 170]), np.array([160, 190])]
@@ -15,11 +31,6 @@ async def main():
     w = np.array([500, 500])
     b_cond = 0
 
-    simu = MainFrame(n_boids, l_pos, l_v, l_maxv, l_maxa, l_view_range, l_view_angle, w, b_cond)
+    tk_window = MainFrame(n_boids, l_pos, l_v, l_maxv, l_maxa, l_view_range, l_view_angle, w, b_cond)
 
-    await run_tk(simu, 0.01)
-
-
-if __name__ == "__main__":
-
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.get_event_loop().run_until_complete(await_inf_loop(tk_window))

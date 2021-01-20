@@ -31,11 +31,6 @@ class Simulation:
             temp = self.my_world.position(temp[0], temp[1])
             pos_temp.append(temp[0])
             v_temp.append(temp[1])
-        '''
-        pos_temp,v_temp = [x.steering(\
-                            [y for iy,y in enumerate(self.l_boids) if self.my_world.isinrange(x,y) and iy!=ix]\
-                            ) for ix,x in enumerate(self.l_boids)]
-        pos_temp,v_temp = [self.my_world.position(x,y) for x,y in zip(pos_temp,v_temp)]
-        '''
+
         for x, y, z in zip(l_boids, pos_temp, v_temp): x.update(y, z)
 
