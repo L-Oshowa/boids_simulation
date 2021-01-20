@@ -14,6 +14,7 @@ for test in l_test :
         binn.add(test)
         if test.y  == 1 :
             binn.remove(test)
+            #test remove l_test[3]
 print('l_test : '+str(len(l_test))+' binn : '+str(len(binn))+'\n boucle sur l_test :' )
 for test in l_test :
     print('(x,y) = ('+str(test.x)+','+str(test.y)+')')

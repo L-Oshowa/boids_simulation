@@ -4,7 +4,7 @@ import time
 import matplotlib.pyplot as plt
 rng = np.random.default_rng()
 
-l = range(2,100,10)
+l = range(2,20,10)
 dt = [0.0]*len(l)
 for ii,n_boids in enumerate(l) :
     w = np.array([500,500])
@@ -27,6 +27,7 @@ for ii,n_boids in enumerate(l) :
         simu.time_step()
         end = time.time()
         dt[ii] = (end-start+ii*dt[ii])/(ii+1)
+    simu.window.root.destroy()
 plt.plot(list(l),dt,'-x')
 plt.xlabel('nbr boids')
 plt.ylabel('t_moyen sur 100 pas [s]')
