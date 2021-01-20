@@ -1,7 +1,34 @@
 import tkinter as tk
 import math
-from main import start_simulation
 import asyncio
+import simulation
+import boids
+
+
+async def start_simulation(button, simu, l_boids, frame):
+    try:
+        while button['text'] == 'Stop':
+            simu.time_step(l_boids)
+            frame.update([x.pos[0] for x in l_boids], [x.pos[1] for x in l_boids],
+                                       [x.v[0] for x in l_boids],
+                                       [x.v[1] for x in l_boids])  # graphic update
+            await asyncio.sleep(0.1)
+    finally:
+        pass
+
+
+async def run_tk(window, interval=0.05):
+    '''
+    Run a tkinter app in an asyncio event loop.
+    '''
+    try:
+        while True:
+            window.root.update()
+            await asyncio.sleep(interval)
+
+    except tk.TclError as e:
+        if "application has been destroyed" not in e.args[0]:
+            raise
 
 
 class BoidFrame:
@@ -70,7 +97,14 @@ class MainFrame:
 
         '''
 
-    def __init__(self, list_boids, width, height):
+    def __init__(self, n_boids, l_pos, l_v, l_maxv, l_maxa, l_view_range, l_view_angle, w, b_cond):
+
+        self.l_boids = [boids.Boids(l_pos[self.det_in(l_pos, ii)],
+                                    l_v[self.det_in(l_v, ii)],
+                                    l_maxv[self.det_in(l_maxv, ii)],
+                                    l_maxa[self.det_in(l_maxa, ii)],
+                                    l_view_range[self.det_in(l_view_range, ii)],
+                                    l_view_angle[self.det_in(l_view_angle, ii)]) for ii in range(n_boids)]
 
         self.root = tk.Tk()
         self.root.title("Boids")
@@ -78,9 +112,9 @@ class MainFrame:
         self.root.attributes('-topmost', True)
         self.root.after_idle(self.root.attributes, '-topmost', False)
 
-        self.boid_window = BoidFrame(self.root, list_boids, width, height)
+        self.boid_window = BoidFrame(self.root, self.l_boids, w[0], w[1])
 
-        self.button_canvas = tk.Canvas(self.root, width=width, height=20, highlightthickness=0)
+        self.button_canvas = tk.Canvas(self.root, width=w[0], height=20, highlightthickness=0)
         self.button_canvas.pack()
 
         self.b_start = tk.Button(self.button_canvas, text='Start', command=self.start_button)
@@ -88,9 +122,25 @@ class MainFrame:
 
         self.root.update()
 
+        self.f = 0
+
+        self.simu = simulation.Simulation(w, b_cond)
+
     def start_button(self):
         if self.b_start['text'] == 'Start':
             self.b_start['text'] = 'Stop'
-            return asyncio.ensure_future(start_simulation(self.b_start))
+            self.f = asyncio.ensure_future(start_simulation(self.b_start, self.simu, self.l_boids, self.boid_window))
+            return self.f
         else:
             self.b_start['text'] = 'Start'
+            self.f.cancel()
+
+
+    def det_in(self, in_list, ii):  #check if in_list is of length 1 or <= ii in the first case, returne 1, in the second, return ii. if ii>len(in_list) return the last element of the liste and print a message
+        if ii < len(in_list):
+            return ii
+        elif len(in_list) == 1:
+            return 0
+        else :
+            print('not enough argument for the initialisation of the boids')
+            return len(in_list)-1
