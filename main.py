@@ -22,11 +22,11 @@ for ii,n_boids in enumerate(l) :
 
     for jj in range(n) :
         ts = 0.05
-        #time.sleep(ts)
         start = time.time()
         simu.time_step()
         end = time.time()
-        dt[ii] = (end-start+ii*dt[ii])/(ii+1)
+        dt[jj] = (end-start+ii*dt[jj])/(jj+1)
+        time.sleep(max(0,ts+start-end))
     simu.window.root.destroy()
 plt.plot(list(l),dt,'-x')
 plt.xlabel('nbr boids')
