@@ -15,17 +15,17 @@ for ii,n_boids in enumerate(l) :
     l_maxa = [1]
     l_view_range = [100]
     l_view_angle = [80]
-
+    n_binn = [2]
     n = 100
 
-    simu = simulation.Simulation(n_boids,l_pos,l_v,l_maxv,l_maxa,l_view_range,l_view_angle,w,b_cond)
+    simu = simulation.Simulation(n_boids,l_pos,l_v,l_maxv,l_maxa,l_view_range,l_view_angle,w,b_cond,n_binn)
 
     for jj in range(n) :
         ts = 0.05
         start = time.time()
         simu.time_step()
         end = time.time()
-        dt[jj] = (end-start+ii*dt[jj])/(jj+1)
+        dt[ii] = (end-start+jj*dt[ii])/(jj+1)
         time.sleep(max(0,ts+start-end))
     simu.window.root.destroy()
 plt.plot(list(l),dt,'-x')
