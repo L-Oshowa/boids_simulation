@@ -74,16 +74,14 @@ class BoidFrame:
         s: norm of the speed
     '''
 
-    def __init__(self, master, boids, width, height):
+    def __init__(self, master, canvas, l_boids):
 
-        self.nbr_boids = len(boids)
+        self.nbr_boids = len(l_boids)
         self.master = master
-
-        self.canvas = tk.Canvas(self.master, width=width, height=height)
-        self.canvas.pack()
+        self.canvas = canvas
 
         self.drawing = [self.canvas.create_polygon(
-                                self.polygon(boids[x].pos[0], boids[x].pos[1], boids[x].v[0], boids[x].v[1])
+                                self.polygon(l_boids[x].pos[0], l_boids[x].pos[1], l_boids[x].v[0], l_boids[x].v[1])
                         ) for x in range(self.nbr_boids)]
 
     @staticmethod
@@ -135,13 +133,14 @@ class MainFrame:
     def __init__(self, n_boids, l_pos, l_v, l_maxv, l_maxa, l_view_range, l_view_angle, w, b_cond):
 
         self.simu = simulation.Simulation(w, b_cond)
+        self.n_boids=n_boids
 
         self.l_boids = [boids.Boids(l_pos[self.simu.det_in(l_pos, ii)],
                                     l_v[self.simu.det_in(l_v, ii)],
                                     l_maxv[self.simu.det_in(l_maxv, ii)],
                                     l_maxa[self.simu.det_in(l_maxa, ii)],
                                     l_view_range[self.simu.det_in(l_view_range, ii)],
-                                    l_view_angle[self.simu.det_in(l_view_angle, ii)]) for ii in range(n_boids)]
+                                    l_view_angle[self.simu.det_in(l_view_angle, ii)]) for ii in range(self.n_boids)]
 
         self.root = tk.Tk()
         self.root.title("Boids")
@@ -149,13 +148,25 @@ class MainFrame:
         self.root.attributes('-topmost', True)
         self.root.after_idle(self.root.attributes, '-topmost', False)
 
-        self.boid_window = BoidFrame(self.root, self.l_boids, w[0], w[1])
+        self.boid_canvas = tk.Canvas(self.root, width=w[0], height=w[1])
+        self.boid_canvas.grid(row=0, column=0, columnspan=5)
 
-        self.button_canvas = tk.Canvas(self.root, width=w[0], height=20, highlightthickness=0)
-        self.button_canvas.pack()
+        self.boid_window = BoidFrame(self.root, self.boid_canvas, self.l_boids)
 
-        self.b_start = tk.Button(self.button_canvas, text='Start', command=self.start_button)
-        self.b_start.pack()
+        self.b_start = tk.Button(self.root, text='Start', command=self.start_button)
+        self.b_start.grid(row=1, column=2)
+
+        self.slider_separation = tk.Scale(self.root, from_=0, to=200, resolution=10, orient='horizontal', state='active')
+        self.slider_separation.set(100)
+        self.slider_separation.grid(row=2, column=0)
+
+        self.slider_cohesion = tk.Scale(self.root, from_=0, to=200, resolution=10, orient='horizontal', state='active')
+        self.slider_cohesion.set(100)
+        self.slider_cohesion.grid(row=2, column=2)
+
+        self.slider_alignment = tk.Scale(self.root, from_=0, to=200, resolution=10, orient='horizontal', state='active')
+        self.slider_alignment.set(100)
+        self.slider_alignment.grid(row=2, column=4)
 
         self.root.update()
 
@@ -166,7 +177,18 @@ class MainFrame:
         if self.b_start['text'] == 'Start':
             self.b_start['text'] = 'Stop'
             self.f = asyncio.ensure_future(start_simulation(self.simu, self.l_boids, self.boid_window))
-            return self.f
+            self.slider_separation.configure(state='disabled')
+            self.slider_cohesion.configure(state='disabled')
+            self.slider_alignment.configure(state='disabled')
+
+            percent = [self.slider_separation.get()/100, self.slider_cohesion.get()/100, self.slider_alignment.get()/100]
+
+            for i in range(self.n_boids):
+                self.l_boids[i].percent_coeff = percent
+
         else:
             self.b_start['text'] = 'Start'
             self.f.cancel()
+            self.slider_separation.configure(state='active')
+            self.slider_cohesion.configure(state='active')
+            self.slider_alignment.configure(state='active')
