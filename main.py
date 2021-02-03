@@ -4,8 +4,8 @@ import time
 import matplotlib.pyplot as plt
 rng = np.random.default_rng()
 
-l = range(2,103,20) #number of boids
-L = range(1,102,10) # number of binn
+l = range(2,123,40) #number of boids
+L = range(1,12,1) # number of binn
 dt = [[0.0 for i in l] for j in L]
 dataname = 'output.txt'
 f = open(dataname,'w')

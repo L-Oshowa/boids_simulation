@@ -67,10 +67,10 @@ class Simulation :
             in_range_boids = []
             #no need to floor since we use int() later on
             pmin = np.maximum((looking_boids.pos-looking_boids.view_range)/self.w_binn,0).astype(int)
-            pmax = np.maximum((looking_boids.pos+looking_boids.view_range)/self.w_binn,self.n_binn-1).astype(int)
+            pmax = np.minimum((looking_boids.pos+looking_boids.view_range)/self.w_binn,self.n_binn-1).astype(int)
             if len(self.my_world.w)==2 :
-                for ls_boids in self.binn[pmin[0]:pmax[0]] :
-                    for s_boids in ls_boids[pmin[1]:pmax[1]] :
+                for ls_boids in self.binn[pmin[0]:pmax[0]+1] :
+                    for s_boids in ls_boids[pmin[1]:pmax[1]+1] :
                         for looked_boids in s_boids :
                             if looking_boids!=looked_boids and self.my_world.isinrange(looking_boids,looked_boids) :
                                 in_range_boids.append(looked_boids)
@@ -85,12 +85,6 @@ class Simulation :
             temp = self.my_world.position(temp[0],temp[1])
             pos_temp.append(temp[0])
             v_temp.append(temp[1])
-        '''
-        pos_temp,v_temp = [x.steering(\
-                            [y for iy,y in enumerate(self.l_boids) if self.my_world.isinrange(x,y) and iy!=ix]\
-                            ) for ix,x in enumerate(self.l_boids)]
-        pos_temp,v_temp = [self.my_world.position(x,y) for x,y in zip(pos_temp,v_temp)]
-        '''
         for x,y,z in zip(self.l_boids, pos_temp, v_temp) :
             cond = any(np.floor(x.pos/self.w_binn)!=np.floor(y/self.w_binn))
             if cond :
