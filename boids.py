@@ -25,6 +25,7 @@ class Boids :
         self.view_range = view_range
         self.view_angle = view_angle
         self.steering_coeff = [1, 1, 1]
+        self.percent_coeff = [1, 1, 1]
 
     def steering(self, list_neighbour):
         nbr_neighbour = len(list_neighbour)
@@ -51,17 +52,19 @@ class Boids :
             center_gravity = center_gravity / total_attraction
             alignment = alignment - self.v
 
-            force = self.steering_coeff[0] * force_separation\
-                  + self.steering_coeff[1] * (center_gravity-self.pos)\
-                  + self.steering_coeff[2] * alignment
+            force = self.steering_coeff[0] * self.percent_coeff[0] * force_separation\
+                  + self.steering_coeff[1] * self.percent_coeff[1] * (center_gravity-self.pos)\
+                  + self.steering_coeff[2] * self.percent_coeff[2] * alignment
 
             acceleration = force / self.mass
-            norm_a =np.linalg.norm(acceleration)
-            if norm_a > self.maxa: acceleration = acceleration * self.maxa / norm_a
+            norm_a = np.linalg.norm(acceleration)
+            if norm_a > self.maxa:
+                acceleration = acceleration * self.maxa / norm_a
 
             new_v = acceleration + self.v
             norm_v = np.linalg.norm(new_v)
-            if norm_v > self.maxv: new_v = new_v * self.maxv / norm_v
+            if norm_v > self.maxv:
+                new_v = new_v * self.maxv / norm_v
 
         else:
             new_v = self.v
@@ -69,6 +72,6 @@ class Boids :
         new_pos = self.pos + self.v
         return new_pos, new_v
 
-    def update(self,npos,nv) :
+    def update(self, npos, nv):
         self.pos = npos
         self.v = nv
