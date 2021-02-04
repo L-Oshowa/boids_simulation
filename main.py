@@ -24,8 +24,8 @@ if __name__ == "__main__":
     n_boids = 3
     l_pos = [np.array([110, 120]), np.array([160, 170]), np.array([160, 190])]
     l_v = [np.array([5, 5]), np.array([5, -5]), np.array([5, -5])]
-    l_maxv = [40]
-    l_maxa = [40]
+    l_maxv = [10]
+    l_maxa = [1]
     l_view_range = [100]
     l_view_angle = [80]
     w = np.array([500, 500])
