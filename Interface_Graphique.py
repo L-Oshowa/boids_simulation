@@ -147,23 +147,23 @@ class MainFrame:
             root:           contain the TK
             boid_window:    the canvas containing the boids (a BoidFrame object)
             button_canvas:  the canvas containing the buttons
+
             b_start:        the start button which launch the simulation
             f:              task to run in asyncio the simulation
     """
 
-    def __init__(self, n_boids, l_pos, l_v, l_maxv, l_maxa, l_view_range, l_view_angle, w, b_cond):
+    def __init__(self, n_boids, l_pos, l_v, l_maxv, l_maxa, l_view_range, l_view_angle, w, b_cond,l_n_binn):
 
-        self.simu = simulation.Simulation(w, b_cond)
+        
         self.n_boids = n_boids
         self.w = w
-
-        self.l_boids = [boids.Boids(l_pos[self.simu.det_in(l_pos, ii)],
-                                    l_v[self.simu.det_in(l_v, ii)],
-                                    l_maxv[self.simu.det_in(l_maxv, ii)],
-                                    l_maxa[self.simu.det_in(l_maxa, ii)],
-                                    l_view_range[self.simu.det_in(l_view_range, ii)],
-                                    l_view_angle[self.simu.det_in(l_view_angle, ii)]) for ii in range(self.n_boids)]
-
+        self.l_boids = [boids.Boids(l_pos[simulation.det_in(l_pos, ii)],
+                                    l_v[simulation.det_in(l_v, ii)],
+                                    l_maxv[simulation.det_in(l_maxv, ii)],
+                                    l_maxa[simulation.det_in(l_maxa, ii)],
+                                    l_view_range[simulation.det_in(l_view_range, ii)],
+                                    l_view_angle[simulation.det_in(l_view_angle, ii)]) for ii in range(self.n_boids)]
+        self.simu = simulation.Simulation(w, b_cond, self.l_boids, l_n_binn)
         self.root = tk.Tk()
         self.root.title("Boids")
         self.root.lift()
